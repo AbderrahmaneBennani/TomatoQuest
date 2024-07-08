@@ -10,7 +10,7 @@ function App() {
   //Initiliaze Timer
   let minutes = 25;
   let seconds = 0;
-  timer.innerHTML = "25m:00s";
+  //timer.innerHTML = "25m:00s";
   
   //CountDown
 
@@ -63,11 +63,11 @@ function App() {
   
 
   //adding event listeners to the buttons
-
+/*
   startButton.addEventListener('click', startTimer);
   resetButton.addEventListener('click', resetTimer);
   pauseButton.addEventListener('click', pauseTimer);
-  
+  */
   return (
     <>
     <h1>TomatoQuest</h1>
