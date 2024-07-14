@@ -4,13 +4,15 @@ const Timer = () => {
   const [time, setTime] = useState(25 * 60); // initial time in seconds
   const [isActive, setIsActive] = useState(false);
   const intervalRef = useRef(null); // useRef to keep track of the interval
+  const [count, setSession] = useState(0);
 
   useEffect(() => {
     if (isActive) {
       intervalRef.current = setInterval(() => {
         setTime((prevTime) => {
           if (prevTime <= 1) {
-            clearInterval(intervalRef.current);
+            setSession(count + 1);
+            resetTimer();
             return 0;
           }
           return prevTime - 1;
@@ -40,9 +42,9 @@ const Timer = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <h1 className="text-8xl mb-12">{formatTime(time)}</h1>
-
+    <div className="flex flex-col text-center">
+      <h1 className="text-8xl mb-6">{formatTime(time)}</h1>
+      <h3 className="text-xl mb-12">{"#" + count}</h3>
       <div className="m-auto">
         <button className="text-2xl m-1" onClick={toggleTimer}>
           {isActive ? "Pause" : "Start"}
