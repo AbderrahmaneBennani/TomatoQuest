@@ -1,46 +1,57 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const Timer = () => {
-  let seconds = 25 * 60;
-  const [active, setActive] = useState(false);
-  let interval;
+  const [time, setTime] = useState(25 * 60); // initial time in seconds
+  const [isActive, setIsActive] = useState(false);
+  const intervalRef = useRef(null); // useRef to keep track of the interval
 
-  function updateTimer() {
-    seconds--;
-    console.log(seconds);
-  }
-
-  function toggleTimer() {
-    setActive(!active);
-    clearInterval(interval);
-  }
-
-  function pauseTimer() {}
-
-  function resetTimer() {}
-
-  function formatTime(time) {
-    if (time < 60) {
-      return time;
+  useEffect(() => {
+    if (isActive) {
+      intervalRef.current = setInterval(() => {
+        setTime((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(intervalRef.current);
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+    } else if (!isActive && intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
-    const minutes = time / 60;
-    const remainingSeconds = time % 60;
-    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
-  }
 
-  if (active) {
-    interval = setInterval(updateTimer, 1000);
-  } else {
-    clearInterval(interval);
-  }
+    return () => clearInterval(intervalRef.current); // cleanup on component unmount
+  }, [isActive]);
+
+  const toggleTimer = () => {
+    setIsActive(!isActive);
+  };
+
+  const resetTimer = () => {
+    clearInterval(intervalRef.current);
+    setIsActive(false);
+    setTime(25 * 60); // reset to initial time
+  };
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
 
   return (
-    <>
-      <div>
-        {formatTime(seconds)}
-        <button onClick={toggleTimer}>ToggleButton</button>
+    <div className="flex flex-col">
+      <h1 className="text-8xl mb-12">{formatTime(time)}</h1>
+
+      <div className="m-auto">
+        <button className="text-2xl m-1" onClick={toggleTimer}>
+          {isActive ? "Pause" : "Start"}
+        </button>
+        <button className="text-2xl m-2" onClick={resetTimer}>
+          Reset
+        </button>
       </div>
-    </>
+    </div>
   );
 };
 
